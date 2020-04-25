@@ -58,11 +58,14 @@ public class TechJobs {
                 String searchField = getUserSelection("Search by:", columnChoices);
 
                 // What is their search term?
+                //ToDo maybe better validation for terms.. may serve better as own method/class
+//                 - how hard would it be to accept spaces or multipul entries
+//                 - im picutring maybe collecting the search and making an array of terms.
                 System.out.println("\nSearch term: ");
                 String searchTerm = in.nextLine();
 
                 if (searchField.equals("all")) {
-                    System.out.println("Search all fields not yet implemented.");
+                    printJobs(JobData.findByValue(searchTerm));
                 } else {
                     printJobs(JobData.findByColumnAndValue(searchField, searchTerm));
                 }
