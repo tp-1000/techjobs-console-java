@@ -7,10 +7,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -44,6 +41,7 @@ public class JobData {
             }
         }
 
+        Collections.sort(values);
         return values;
     }
 
@@ -52,7 +50,7 @@ public class JobData {
         // load data, if not already loaded
         loadData();
 
-        return allJobs;
+        return (ArrayList<HashMap<String, String>>) allJobs.clone();
     }
 
     /**
@@ -63,7 +61,7 @@ public class JobData {
      * with "Enterprise Holdings, Inc".
      *
      * @param column   Column that should be searched.
-     * @param value Value of teh field to search for
+     * @param value Value of the field to search for
      * @return List of all jobs matching the criteria
      */
     public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
@@ -75,9 +73,34 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String aValue = row.get(column).toLowerCase();
 
             if (aValue.contains(value)) {
+                jobs.add(row);
+            }
+        }
+
+        return jobs;
+    }
+
+    /**
+     * Returns results of search on jobs data by job's inclusion of the search term.
+     *
+     * For example, searching for employer "enter" will include the result
+     * "Developer, Enterprise Holdings, Inc, Java, St. Louis".
+     *
+     * @param searchTerm Value of the search
+     * @return List of all jobs that contain searchTerm as substring
+     */
+    public static ArrayList<HashMap<String, String>> findByValue(String searchTerm) {
+        // load data, if not already loaded
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        for (HashMap<String, String> row : allJobs) {
+            //row is a hashmap object. Convert to string and search converted string for substring match
+            if (row.values().toString().toLowerCase().contains(searchTerm) && !searchTerm.equals(",")) {
                 jobs.add(row);
             }
         }
@@ -126,19 +149,5 @@ public class JobData {
         }
     }
 
-    public static ArrayList<HashMap<String, String>> findByValue(String searchTerm) {
-        // load data, if not already loaded
-        loadData();
 
-        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
-
-        for (HashMap<String, String> row : allJobs) {
-            //row is a hashmap object. Convert to string and search converted string for substring match
-                if (row.values().toString().toLowerCase().contains(searchTerm.toLowerCase()) && !searchTerm.equals(",")) {
-                    jobs.add(row);
-                }
-            }
-
-        return jobs;
-    }
 }
